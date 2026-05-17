@@ -14,6 +14,7 @@ interface AppState {
   theme: 'dark' | 'light';
 
   intensity: number[];
+  ensureUnique: boolean;
   isAnalyzing: boolean;
   isGenerating: boolean;
   styleDescription: string | null;
@@ -27,6 +28,7 @@ interface AppState {
   setTheme: (theme: 'dark' | 'light') => void;
 
   setIntensity: (val: number[]) => void;
+  setEnsureUnique: (val: boolean) => void;
   setIsAnalyzing: (val: boolean) => void;
   setIsGenerating: (val: boolean) => void;
   setStyleDescription: (desc: string | null) => void;
@@ -46,6 +48,7 @@ export const useAppStore = create<AppState>()(
       theme: 'dark', // default dark
 
       intensity: [60],
+      ensureUnique: true,
       isAnalyzing: false,
       isGenerating: false,
       styleDescription: null,
@@ -89,6 +92,7 @@ export const useAppStore = create<AppState>()(
       setTheme: (theme) => set({ theme }),
 
       setIntensity: (val) => set({ intensity: val }),
+      setEnsureUnique: (val) => set({ ensureUnique: val }),
       setIsAnalyzing: (val) => set({ isAnalyzing: val }),
       setIsGenerating: (val) => set({ isGenerating: val }),
       setStyleDescription: (desc) => set({ styleDescription: desc }),
@@ -101,6 +105,7 @@ export const useAppStore = create<AppState>()(
         isAnalyzing: false,
         isGenerating: false,
         intensity: [60],
+        ensureUnique: true,
         history: [null],
         historyIndex: 0
       }),
@@ -109,6 +114,7 @@ export const useAppStore = create<AppState>()(
       name: 'styleblend-storage',
       partialize: (state) => ({ 
         intensity: state.intensity,
+        ensureUnique: state.ensureUnique,
         theme: state.theme
       }),
     }

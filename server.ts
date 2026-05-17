@@ -10,11 +10,20 @@ async function startServer() {
   // Increase payload limit for base64 images
   app.use(express.json({ limit: "50mb" }));
 
-  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    console.warn("GEMINI_API_KEY is not defined in the environment. Please add it in your project settings.");
+  }
+  
+  const ai = new GoogleGenAI({ apiKey: apiKey || "" });
 
   // API Routes
   app.post("/api/analyze", async (req, res) => {
     try {
+      if (!apiKey) {
+         return res.status(500).json({ error: "Missing Gemini API Key. Please add GEMINI_API_KEY in your settings." });
+      }
+      
       const { base64Data, mimeType } = req.body;
       const response = await ai.models.generateContent({
         model: "gemini-3-flash-preview",
@@ -41,6 +50,10 @@ async function startServer() {
 
   app.post("/api/generate", async (req, res) => {
     try {
+      if (!apiKey) {
+         return res.status(500).json({ error: "Missing Gemini API Key. Please add GEMINI_API_KEY in your settings." });
+      }
+
       const { base64Data, mimeType, intensity, styleDescription } = req.body;
       const modifier = intensity > 70 ? "Completely transform" : intensity > 40 ? "Adapt" : "Subtly adjust";
       

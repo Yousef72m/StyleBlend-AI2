@@ -27,7 +27,8 @@ export async function analyzeReferenceImage(refImageDataUrl: string): Promise<st
   });
   
   if (!res.ok) {
-    throw new Error('Failed to analyze image from backend');
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Failed to analyze image from backend');
   }
   
   const data = await res.json();
@@ -48,7 +49,8 @@ export async function generateBlendedImage(productImageDataUrl: string, styleDes
   });
   
   if (!res.ok) {
-    throw new Error('Failed to generate image from backend');
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Failed to generate image from backend');
   }
 
   const data = await res.json();

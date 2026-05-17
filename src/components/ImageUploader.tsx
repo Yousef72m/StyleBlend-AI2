@@ -69,10 +69,7 @@ export function ImageUploader({ label, description, value, onChange, className }
   };
 
   return (
-    <div className={cn("flex flex-col gap-2", className)}>
-      <div className="flex justify-between items-end">
-        <label className="text-sm font-semibold tracking-tight uppercase text-muted-foreground">{label}</label>
-      </div>
+    <div className={cn("flex flex-col gap-3 group/uploader w-full", className)}>
       
       {!value ? (
         <div 
@@ -81,10 +78,13 @@ export function ImageUploader({ label, description, value, onChange, className }
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
           className={cn(
-            "relative flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-xl cursor-pointer transition-all duration-200 min-h-[220px]",
-            isDragging ? "border-primary bg-primary/5" : "border-border hover:border-primary/50 hover:bg-muted/50"
+            "relative flex flex-col items-center justify-center p-8 border-2 border-dashed border-primary/50 hover:border-primary rounded-[2rem] cursor-pointer transition-all duration-300 min-h-[300px] lg:min-h-[400px] overflow-hidden bg-background shadow-sm hover:shadow-md",
+            isDragging && "border-primary bg-primary/5 scale-[1.02]"
           )}
         >
+          {isDragging && (
+            <div className="absolute inset-0 bg-primary/5 backdrop-blur-[2px] z-0" />
+          )}
           <input 
             type="file" 
             ref={fileInputRef} 
@@ -92,31 +92,42 @@ export function ImageUploader({ label, description, value, onChange, className }
             accept="image/*" 
             className="hidden" 
           />
-          <div className="flex flex-col items-center gap-3 text-center">
-            <div className="p-3 bg-background rounded-full shadow-sm border">
-              <UploadCloud className="w-5 h-5 text-muted-foreground" />
+          <div className="flex flex-col items-center gap-4 text-center z-10">
+            <div className={cn(
+              "p-5 rounded-2xl shadow-sm transition-transform duration-300",
+              isDragging ? "bg-primary text-primary-foreground scale-110" : "bg-primary/10 text-primary group-hover/uploader:scale-110"
+            )}>
+              <UploadCloud className="w-8 h-8" />
             </div>
-            <div className="space-y-1">
-              <p className="text-sm font-medium">Click or drag image to upload</p>
-              <p className="text-xs text-muted-foreground">{description}</p>
+            <div className="space-y-1.5 flex flex-col items-center">
+              <span className="inline-flex px-3 py-1 bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest rounded-full mb-2">
+                {label}
+              </span>
+              <p className="text-sm font-medium text-foreground">Click or drop to upload</p>
+              <p className="text-xs text-muted-foreground/80 max-w-[200px] mx-auto">{description}</p>
             </div>
           </div>
         </div>
       ) : (
-        <div className="relative rounded-xl overflow-hidden border group bg-muted/30 aspect-square md:aspect-auto min-h-[220px]">
-          <img src={value} alt={label} className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
-            <Button 
-              variant="destructive" 
-              size="icon" 
-              className="rounded-full w-10 h-10"
-              onClick={(e) => {
-                e.stopPropagation();
-                onChange(null);
-              }}
-            >
-              <X className="w-4 h-4" />
-            </Button>
+        <div className="relative rounded-[2rem] overflow-hidden border-2 border-dashed border-primary/80 group bg-card shadow-md aspect-square lg:aspect-auto lg:h-[400px] w-full cursor-pointer hover:border-primary transition-all p-1"
+          onClick={() => setCropDialogOpen(true)}
+        >
+          <div className="w-full h-full rounded-[1.8rem] overflow-hidden relative">
+            <img src={value} alt={label} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-3 backdrop-blur-[2px]">
+              <span className="text-white font-medium drop-shadow-md">Click to Crop</span>
+              <Button 
+                variant="destructive" 
+                size="icon" 
+                className="rounded-full w-12 h-12 shadow-xl hover:scale-110 transition-transform bg-destructive/90 hover:bg-destructive absolute bottom-4 right-4"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onChange(null);
+                }}
+              >
+                <X className="w-5 h-5 text-white" />
+              </Button>
+            </div>
           </div>
         </div>
       )}
